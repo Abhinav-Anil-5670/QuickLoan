@@ -1,0 +1,487 @@
+/* --- 1. Typography & Reset --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- REPLACE THIS SECTION AT THE TOP OF YOUR CSS --- */
+body {
+  background-color: #000000;
+  color: #ededed;
+  /* We removed the flex centering from the body so the navbar can sit at the top */
+}
+
+/* --- NEW LAYOUT CHROME --- */
+.layout-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar */
+.top-nav {
+  height: 60px;
+  border-bottom: 1px solid #222222;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  background-color: #050505;
+}
+
+.nav-left, .nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-brand {
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: -0.02em;
+}
+
+.nav-badge {
+  background-color: #222222;
+  color: #888888;
+  font-size: 0.65rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.05em;
+}
+
+.nav-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #888888;
+  font-family: 'JetBrains Mono', monospace;
+  margin-right: 1rem;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #4ade80;
+  border-radius: 50%;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #888888;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.15s ease;
+}
+
+.nav-link:hover {
+  color: #ffffff;
+}
+
+/* Main Content Area */
+.app-main {
+  flex: 1; /* Pushes the footer to the bottom */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 1rem;
+}
+
+/* Footer */
+.bottom-footer {
+  padding: 1.5rem;
+  border-top: 1px solid #222222;
+  text-align: center;
+  color: #666666;
+  font-size: 0.75rem;
+  background-color: #050505;
+  line-height: 1.5;
+}
+
+.footer-copyright {
+  margin-top: 0.25rem;
+  color: #444444;
+}
+
+/* --- KEEP ALL YOUR EXISTING DASHBOARD CSS BELOW THIS LINE --- */
+
+/* --- 2. Split Dashboard Layout --- */
+.app-container {
+  width: 100%;
+  max-width: 1000px; /* Widened for the split screen */
+}
+
+.dashboard-card {
+  background-color: #050505;
+  border: 1px solid #222222;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+@media (min-width: 800px) {
+  .dashboard-card {
+    flex-direction: row; /* Triggers the split screen on desktop */
+    min-height: 600px;
+  }
+}
+
+/* --- 3. Left Panel (Form) --- */
+.dashboard-left {
+  flex: 1; /* Takes up 50% width */
+  padding: 2.5rem;
+  border-bottom: 1px solid #222222;
+}
+
+@media (min-width: 800px) {
+  .dashboard-left {
+    border-bottom: none;
+    border-right: 1px solid #222222; /* Vertical divider line */
+  }
+}
+
+.header-simple {
+  margin-bottom: 2rem;
+}
+
+.title-simple {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.subtitle-simple {
+  color: #666666;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: 'JetBrains Mono', monospace; /* Monospace for a tech feel */
+}
+
+/* --- 4. Inputs & Grid --- */
+.loan-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #888888;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  background-color: #000000;
+  color: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #333333;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+select.form-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23888888'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+}
+
+.form-input:focus {
+  border-color: #888888;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #ffffff;
+  color: #000000;
+  font-weight: 500;
+  font-size: 0.875rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: opacity 0.15s ease;
+}
+
+.submit-btn:hover:not(.btn-loading) {
+  opacity: 0.9;
+}
+
+.submit-btn.btn-loading {
+  background-color: #222222;
+  color: #888888;
+  cursor: not-allowed;
+}
+
+/* --- 5. Right Panel (AI Console) --- */
+.dashboard-right {
+  flex: 1; /* Takes up the other 50% width */
+  background-color: #020202; /* Even darker to separate it from the form */
+  padding: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.console-wrapper {
+  width: 100%;
+  max-width: 320px;
+}
+
+/* Status text for empty and loading states */
+.console-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: #666666;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+/* A cool blinking green dot for the empty state */
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #4ade80;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+  70% { opacity: 0.2; box-shadow: 0 0 0 6px rgba(74, 222, 128, 0); }
+  100% { opacity: 1; box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+}
+
+/* A simple loading spinner */
+.spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid #333333;
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* --- 6. Results Area --- */
+.result-box {
+  padding: 1.5rem;
+  border-radius: 6px;
+  border: 1px solid #222222;
+  background-color: #050505;
+}
+
+.result-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-family: 'JetBrains Mono', monospace; /* Monospace makes it look like terminal output */
+}
+
+.result-success { border-color: rgba(74, 222, 128, 0.3); }
+.result-success .result-title { color: #4ade80; }
+
+.result-error { border-color: rgba(248, 113, 113, 0.3); }
+.result-error .result-title { color: #f87171; }
+
+.result-desc {
+  color: #888888;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+/* --- 7. Explainable AI (XAI) Metrics --- */
+.confidence-section {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #222222;
+}
+
+.confidence-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.confidence-label {
+  font-size: 0.75rem;
+  color: #888888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.confidence-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* The Progress Bar */
+.confidence-bar-bg {
+  width: 100%;
+  height: 6px;
+  background-color: #111111;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.confidence-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Analysis Tags */
+.tags-container {
+  margin-top: 1.5rem;
+  text-align: left;
+}
+
+.tags-title {
+  font-size: 0.75rem;
+  color: #888888;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tags-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  border: 1px solid transparent;
+}
+
+/* Tag Colors */
+.tag-success {
+  background-color: rgba(74, 222, 128, 0.1);
+  color: #4ade80;
+  border-color: rgba(74, 222, 128, 0.2);
+}
+
+.tag-warning {
+  background-color: rgba(250, 204, 21, 0.1);
+  color: #facc15;
+  border-color: rgba(250, 204, 21, 0.2);
+}
+
+.tag-danger {
+  background-color: rgba(248, 113, 113, 0.1);
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.2);
+}
+
+/* --- 8. Counter-Offer Alert --- */
+.counter-offer-alert {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  background-color: rgba(250, 204, 21, 0.05); /* Very subtle amber tint */
+  border: 1px solid rgba(250, 204, 21, 0.2);
+  border-radius: 6px;
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  text-align: left;
+  animation: slideUp 0.4s ease-out 0.2s both; /* Slight delay for dramatic effect */
+}
+
+.counter-offer-icon {
+  color: #facc15; /* Amber */
+  margin-top: 0.1rem;
+}
+
+.counter-offer-text strong {
+  display: block;
+  font-size: 0.8rem;
+  color: #facc15;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.counter-offer-text p {
+  font-size: 0.875rem;
+  color: #cccccc;
+  line-height: 1.4;
+}
+
+.counter-offer-text span {
+  color: #ffffff;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  background-color: rgba(255,255,255,0.1);
+  padding: 0 0.25rem;
+  border-radius: 3px;
+}
+
+/* --- 9. Validation Error Banner --- */
+.validation-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  font-size: 0.8rem;
+  font-family: 'JetBrains Mono', monospace;
+  animation: slideDown 0.2s ease-out;
+}
+
+.validation-banner svg {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
