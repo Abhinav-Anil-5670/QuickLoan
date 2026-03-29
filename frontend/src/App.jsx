@@ -25,7 +25,8 @@ function App() {
     Credit_History: 1.0,
     Property_Area: 2,
   });
-
+ 
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     // If the input is empty, leave it as an empty string. Otherwise, convert to number.
