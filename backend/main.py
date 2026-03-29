@@ -77,8 +77,9 @@ def predict_loan(application: LoanApplication):
         test_amount = application.LoanAmount
         
         # Keep lowering the loan by $5k until the AI says yes (stop at $10k minimum)
-        while test_amount >= 10:
-            test_amount -= 5
+        # Stop at $1k minimum, drop by $1k at a time
+        while test_amount >= 1: 
+            test_amount -= 1
             test_ratio = (test_amount * 1000) / total_income
             
             # Create a temporary simulation input

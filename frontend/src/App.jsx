@@ -28,25 +28,29 @@ function App() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: parseFloat(value) });
+    // If the input is empty, leave it as an empty string. Otherwise, convert to number.
+    setFormData({ ...formData, [name]: value === "" ? "" : parseFloat(value) });
   };
-
+  
   const analyzeMetrics = () => {
     const tags = [];
     const totalIncome = formData.ApplicantIncome + formData.CoapplicantIncome;
-    const ratio = (formData.LoanAmount * 1000) / (totalIncome || 1);
+    const ratio = formData.LoanAmount / (totalIncome || 1);
 
+    // 1. Credit History Check
     if (formData.Credit_History === 0) {
       tags.push({ label: "Critical: Bad Credit History", type: "danger" });
     } else {
       tags.push({ label: "Positive: Good Credit History", type: "success" });
     }
 
-    if (ratio > 40) {
-      tags.push({
-        label: "Warning: High Debt-to-Income Ratio",
-        type: "warning",
-      });
+    // 2. The Smart Income Ratio Check (Syncs with AI result)
+    if (result === false && formData.Credit_History === 1.0) {
+      // If AI rejected them despite good credit, the ratio is definitely the problem!
+      tags.push({ label: "Warning: Loan Exceeds Safe Income Multiplier", type: "warning" });
+    } else if (ratio >= 40) {
+      // Catch extreme ratios even before the AI finishes
+      tags.push({ label: "Warning: High Debt-to-Income Ratio", type: "warning" });
     } else {
       tags.push({ label: "Optimal: Healthy Income Ratio", type: "success" });
     }
@@ -62,58 +66,79 @@ function App() {
     setResult(null);
     setCounterOffer(null);
 
-    const totalIncome = formData.ApplicantIncome + formData.CoapplicantIncome;
+    // CURRENT EXCHANGE RATE: 1 USD = ~83 INR
+    const EXCHANGE_RATE = 83; 
 
-    // --- NEW: THE AI GUARDRAILS (Input Validation) ---
+    const totalIncomeINR = formData.ApplicantIncome + formData.CoapplicantIncome;
+
+    // --- NEW: THE INR GUARDRAILS (Input Validation) ---
     if (
       formData.ApplicantIncome < 0 ||
       formData.CoapplicantIncome < 0 ||
       formData.LoanAmount < 0
     ) {
       setValidationError("Error: Financial values cannot be negative.");
-      return; // Stops the function from calling the AI
+      return; 
     }
-    if (totalIncome <= 0) {
+    if (totalIncomeINR <= 0) {
       setValidationError(
-        "Error: Total household income must be greater than $0 to apply.",
+        "Error: Total household income must be greater than ₹0 to apply.",
       );
       return;
     }
     if (formData.LoanAmount <= 0) {
       setValidationError(
-        "Error: Minimum loan request must be at least $1,000.",
+        "Error: Minimum loan request must be at least ₹100,000.",
       );
       return;
     }
-    if (totalIncome > 1000000) {
+    // Updated limits for INR (e.g., $1M USD = ₹8.3 Crores)
+    if (totalIncomeINR > (1000000 * EXCHANGE_RATE)) {
       setValidationError(
-        "Notice: Incomes over $1,000,000 exceed automated underwriting limits.",
+        "Notice: Incomes over ₹8.3 Crores exceed automated underwriting limits.",
       );
       return;
     }
-    if (formData.LoanAmount > 5000) {
+    if (formData.LoanAmount > (5000000 * EXCHANGE_RATE)) {
       setValidationError(
-        "Notice: Automated approvals are capped at $5,000,000 loans.",
+        "Notice: Automated approvals are capped at ₹41.5 Crores.",
       );
       return;
     }
     // --------------------------------------------------
 
-    
-
     setLoading(true);
+
+    // --- TRANSLATION LAYER: Convert INR to USD for the AI ---
+   // --- TRANSLATION LAYER: Convert INR to USD for the AI ---
+    const apiPayload = {
+      ...formData,
+      ApplicantIncome: formData.ApplicantIncome / EXCHANGE_RATE,
+      CoapplicantIncome: formData.CoapplicantIncome / EXCHANGE_RATE,
+      // CRITICAL FIX: The Kaggle AI expects the loan in THOUSANDS of USD. 
+      // We divide by 83 to get USD, then divide by 1000 so the AI understands it.
+      LoanAmount: (formData.LoanAmount / EXCHANGE_RATE) / 1000
+    };
 
     try {
       const response = await fetch("http://127.0.0.1:8000/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(apiPayload), 
       });
       const data = await response.json();
 
       setResult(data.approved);
       setConfidence(data.confidence);
-      setCounterOffer(data.counter_offer);
+      
+      // TRANSLATION LAYER: Convert the USD counter-offer back to INR
+      if (data.counter_offer) {
+        // The AI returns the offer in thousands of USD (e.g., 115).
+        // Multiply by 1000 to get full USD, then by 83 to get full INR!
+        const offerInRupees = Math.round(data.counter_offer * 1000 * EXCHANGE_RATE);
+        setCounterOffer(offerInRupees); 
+      }
+      
     } catch (error) {
       console.error(error);
       alert("Could not connect to the AI. Is your Python server running?");
@@ -208,7 +233,7 @@ function App() {
               <form onSubmit={handleSubmit} className="loan-form">
                 <div className="form-grid">
                   <div className="form-group">
-                    <label className="form-label">Your Income ($)</label>
+                    <label className="form-label">Your Monthly Income (₹)</label>
                     <input
                       type="number"
                       name="ApplicantIncome"
@@ -220,7 +245,7 @@ function App() {
                   </div>
                   <div className="form-group">
                     <label className="form-label">
-                      Co-Applicant Income ($)
+                      Co-Applicant Monthly Income (₹)
                     </label>
                     <input
                       type="number"
@@ -233,7 +258,7 @@ function App() {
                   </div>
                   <div className="form-group">
                     <label className="form-label">
-                      Loan Amount (in thousands)
+                      Loan Amount
                     </label>
                     <input
                       type="number"
@@ -343,7 +368,8 @@ function App() {
                           <strong>Counter-Offer Available</strong>
                           <p>
                             You are pre-approved for a revised loan amount of{" "}
-                            <span>${counterOffer},000</span> based on current
+                            {/* Format the number with commas and add the Rupee symbol! */}
+                            <span>₹{counterOffer.toLocaleString('en-IN')}</span> based on current
                             income ratios.
                           </p>
                         </div>
