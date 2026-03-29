@@ -485,3 +485,83 @@ select.form-input {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* --- 10. Analytics Dashboard --- */
+.analytics-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 0 1rem 4rem;
+}
+
+.analytics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  border-top: 1px solid #222;
+  padding-top: 3rem;
+}
+
+.analytics-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.btn-secondary {
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  color: #888888;
+  border: 1px solid #333333;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: #666666;
+  color: #ffffff;
+}
+
+.graphs-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  animation: slideUp 0.5s ease-out;
+}
+
+@media (min-width: 800px) {
+  .graphs-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.graph-card {
+  background-color: #050505;
+  border: 1px solid #222222;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column; /* Stack the image and text vertically */
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  gap: 1rem; /* Add some space between the image and the label */
+}
+
+.graph-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+/* NEW: Styling for the graph type label */
+.graph-label {
+  color: #666666;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: 'JetBrains Mono', monospace;
+}

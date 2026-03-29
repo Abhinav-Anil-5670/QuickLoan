@@ -6,6 +6,8 @@ function App() {
   const [result, setResult] = useState(null);
   const [confidence, setConfidence] = useState(0);
   const [counterOffer, setCounterOffer] = useState(null);
+  const [graphs, setGraphs] = useState(null)
+  const [loadingGraphs, setLoadingGraphs] = useState(false)
 
   // --- NEW: State to hold our guardrail warnings ---
   const [validationError, setValidationError] = useState(null);
@@ -97,6 +99,8 @@ function App() {
     }
     // --------------------------------------------------
 
+    
+
     setLoading(true);
 
     try {
@@ -118,6 +122,18 @@ function App() {
     }
   };
 
+  const fetchAnalytics = async () => {
+    setLoadingGraphs(true)
+    try {
+      const response = await fetch('http://127.0.0.1:8000/analytics')
+      const data = await response.json()
+      setGraphs(data)
+    } catch (error) {
+      console.error("Failed to fetch graphs", error)
+    } finally {
+      setLoadingGraphs(false)
+    }
+  }
   return (
     <div className="layout-wrapper">
       <nav className="top-nav">
@@ -370,6 +386,44 @@ function App() {
           </div>
         </div>
       </main>
+      
+      {/* --- NEW: AI ANALYTICS DASHBOARD --- */}
+      <section className="analytics-section">
+        <div className="app-container">
+          <div className="analytics-header">
+            <h2>Model Analytics & Explainability</h2>
+            <button onClick={fetchAnalytics} disabled={loadingGraphs} className="btn-secondary">
+              {loadingGraphs ? 'Generating via Python...' : 'Load Data Visualizations'}
+            </button>
+          </div>
+
+          {graphs && (
+            <div className="graphs-grid">
+              
+              <div className="graph-card">
+                <img src={graphs.importance} alt="Feature Importance" />
+                <p className="graph-label">Horizontal Bar Chart</p>
+              </div>
+              
+              <div className="graph-card">
+                <img src={graphs.matrix} alt="Confusion Matrix" />
+                <p className="graph-label">Heatmap</p>
+              </div>
+              
+              <div className="graph-card">
+                <img src={graphs.scatter} alt="Decision Boundary" />
+                <p className="graph-label">Scatter Plot</p>
+              </div>
+              
+              <div className="graph-card">
+                <img src={graphs.heatmap} alt="Correlation Heatmap" />
+                <p className="graph-label">Correlation Matrix (Heatmap)</p>
+              </div>
+
+            </div>
+          )}
+        </div>
+      </section>
 
       <footer className="bottom-footer">
         <p>
